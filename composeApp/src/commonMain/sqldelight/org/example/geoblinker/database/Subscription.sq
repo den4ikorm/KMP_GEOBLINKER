@@ -1,0 +1,33 @@
+CREATE TABLE Subscription (
+    subsId TEXT NOT NULL PRIMARY KEY,
+    uId TEXT NOT NULL,
+    tariff TEXT NOT NULL,
+    startDate TEXT NOT NULL,
+    endDate TEXT NOT NULL,
+    cancellationDate TEXT,
+    subsStatus TEXT NOT NULL,
+    autoRenew INTEGER AS Boolean DEFAULT 0,
+    paid INTEGER AS Boolean DEFAULT 0,
+    pIdJson TEXT,
+    createdAt TEXT NOT NULL,
+    updatedAt TEXT NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_subscription_status ON Subscription(subsStatus);
+
+selectAll:
+SELECT * FROM Subscription;
+
+selectActiveByUserId:
+SELECT * FROM Subscription 
+WHERE uId = ? AND subsStatus = 'active' AND endDate > ?;
+
+insertSubscription:
+INSERT OR REPLACE INTO Subscription (
+    subsId, uId, tariff, startDate, endDate, 
+    cancellationDate, subsStatus, autoRenew, paid, 
+    pIdJson, createdAt, updatedAt
+) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+
+updateStatus:
+UPDATE Subscription SET subsStatus = ?, updatedAt = ? WHERE subsId = ?;
